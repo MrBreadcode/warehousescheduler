@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Edit Preferences</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">Manager Panel</a>
+  <div class="collapse navbar-collapse">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/api/tasks">Tasks</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/api/tasks/archive">Archive</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/api/preferences">Preferences</a>
+      </li>
+    </ul>
+    <a class="btn btn-outline-danger" href="/logout">Logout</a>
+  </div>
+</nav>
+<div class="container">
+  <h1 class="my-4">Edit Preferences</h1>
+  <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+    <span th:text="${errorMessage}"></span>
+  </div>
+  <form th:action="@{/api/preferences/edit/{id}(id=${worker.id})}" method="post">
+    <input type="hidden" name="_method" value="put"/>
+    <div class="mb-3">
+      <label for="shiftPreference" class="form-label">Shift Preference</label>
+      <div>
+        <input type="radio" id="day" name="shiftPreference" value="DAY" th:checked="${worker.preferences.shiftPreference == T(com.rohoza.warehousescheduler.model.Preferences.ShiftType).DAY}">
+        <label for="day">Day</label>
+        <input type="radio" id="night" name="shiftPreference" value="NIGHT" th:checked="${worker.preferences.shiftPreference == T(com.rohoza.warehousescheduler.model.Preferences.ShiftType).NIGHT}">
+        <label for="night">Night</label>
+        <input type="radio" id="both" name="shiftPreference" value="BOTH" th:checked="${worker.preferences.shiftPreference == T(com.rohoza.warehousescheduler.model.Preferences.ShiftType).BOTH}">
+        <label for="both">Both</label>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="workingDays" class="form-label">Working Days</label>
+      <div>
+        <input type="checkbox" id="w_monday" name="workingDays" value="MONDAY" th:checked="${worker.preferences.workingDays.contains(T(java.time.DayOfWeek).MONDAY)}">
+        <label for="w_monday">Monday</label>
+        <input type="checkbox" id="w_tuesday" name="workingDays" value="TUESDAY" th:checked="${worker.preferences.workingDays.contains(T(java.time.DayOfWeek).TUESDAY)}">
+        <label for="w_tuesday">Tuesday</label>
+        <input type="checkbox" id="w_wednesday" name="workingDays" value="WEDNESDAY" th:checked="${worker.preferences.workingDays.contains(T(java.time.DayOfWeek).WEDNESDAY)}">
+        <label for="w_wednesday">Wednesday</label>
+        <input type="checkbox" id="w_thursday" name="workingDays" value="THURSDAY" th:checked="${worker.preferences.workingDays.contains(T(java.time.DayOfWeek).THURSDAY)}">
+        <label for="w_thursday">Thursday</label>
+        <input type="checkbox" id="w_friday" name="workingDays" value="FRIDAY" th:checked="${worker.preferences.workingDays.contains(T(java.time.DayOfWeek).FRIDAY)}">
+        <label for="w_friday">Friday</label>
+        <input type="checkbox" id="w_saturday" name="workingDays" value="SATURDAY" th:checked="${worker.preferences.workingDays.contains(T(java.time.DayOfWeek).SATURDAY)}">
+        <label for="w_saturday">Saturday</label>
+        <input type="checkbox" id="w_sunday" name="workingDays" value="SUNDAY" th:checked="${worker.preferences.workingDays.contains(T(java.time.DayOfWeek).SUNDAY)}">
+        <label for="w_sunday">Sunday</label>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="possibleDays" class="form-label">Possible Days</label>
+      <div>
+        <input type="checkbox" id="p_monday" name="possibleDays" value="MONDAY" th:checked="${worker.preferences.possibleDays.contains(T(java.time.DayOfWeek).MONDAY)}">
+        <label for="p_monday">Monday</label>
+        <input type="checkbox" id="p_tuesday" name="possibleDays" value="TUESDAY" th:checked="${worker.preferences.possibleDays.contains(T(java.time.DayOfWeek).TUESDAY)}">
+        <label for="p_tuesday">Tuesday</label>
+        <input type="checkbox" id="p_wednesday" name="possibleDays" value="WEDNESDAY" th:checked="${worker.preferences.possibleDays.contains(T(java.time.DayOfWeek).WEDNESDAY)}">
+        <label for="p_wednesday">Wednesday</label>
+        <input type="checkbox" id="p_thursday" name="possibleDays" value="THURSDAY" th:checked="${worker.preferences.possibleDays.contains(T(java.time.DayOfWeek).THURSDAY)}">
+        <label for="p_thursday">Thursday</label>
+        <input type="checkbox" id="p_friday" name="possibleDays" value="FRIDAY" th:checked="${worker.preferences.possibleDays.contains(T(java.time.DayOfWeek).FRIDAY)}">
+        <label for="p_friday">Friday</label>
+        <input type="checkbox" id="p_saturday" name="possibleDays" value="SATURDAY" th:checked="${worker.preferences.possibleDays.contains(T(java.time.DayOfWeek).SATURDAY)}">
+        <label for="p_saturday">Saturday</label>
+        <input type="checkbox" id="p_sunday" name="possibleDays" value="SUNDAY" th:checked="${worker.preferences.possibleDays.contains(T(java.time.DayOfWeek).SUNDAY)}">
+        <label for="p_sunday">Sunday</label>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="workingLocations" class="form-label">Working Locations</label>
+      <div>
+        <div th:each="loc : ${allLocations}">
+          <input type="checkbox" th:id="${'w_location-' + loc.id}" th:name="workingLocations" th:value="${loc.id}" th:checked="${worker.preferences.workingLocations.contains(loc)}">
+          <label th:for="${'w_location-' + loc.id}" th:text="${loc.name}">Location</label>
+        </div>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="possibleLocations" class="form-label">Possible Locations</label>
+      <div>
+        <div th:each="loc : ${allLocations}">
+          <input type="checkbox" th:id="${'p_location-' + loc.id}" th:name="possibleLocations" th:value="${loc.id}" th:checked="${worker.preferences.possibleLocations.contains(loc)}">
+          <label th:for="${'p_location-' + loc.id}" th:text="${loc.name}">Location</label>
+        </div>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="vacation" class="form-label">Status</label>
+      <div>
+        <input type="radio" id="vacation-no" name="vacation" value="false" th:checked="${!worker.preferences.vacation}">
+        <label for="vacation-no">Active</label>
+        <input type="radio" id="vacation-yes" name="vacation" value="true" th:checked="${worker.preferences.vacation}">
+        <label for="vacation-yes">Inactive</label>
+      </div>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary">Save</button>
+      <a th:href="@{/api/preferences}" class="btn btn-secondary">Back to Preferences List</a>
+    </div>
+  </form>
+  <div style="margin-bottom: 50px;"></div>
+</div>
+</body>
+</html>

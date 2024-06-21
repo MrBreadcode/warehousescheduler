@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Worker`s Preferences</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">Worker Panel</a>
+  <div class="collapse navbar-collapse">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/api/schedule">Schedule</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/api/personal">Personal Data</a>
+      </li>
+    </ul>
+    <span class="navbar-text mr-3" th:text="${workerName}"></span>
+    <a class="btn btn-outline-danger" href="/logout">Logout</a>
+  </div>
+</nav>
+<div class="container">
+  <h1 class="my-4">Personal Data</h1>
+  <div class="mb-3">
+    <label class="form-label">Name</label>
+    <input type="text" class="form-control" th:value="${workerName}" readonly>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Email</label>
+    <input type="text" class="form-control" th:value="${worker.email}" readonly>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Phone Number</label>
+    <input type="text" class="form-control" th:value="${worker.phoneNumber}" readonly>
+  </div>
+  <h1 class="my-4">Work Preferences</h1>
+  <div class="mb-3">
+    <label class="form-label">Shift Preference</label>
+    <input type="text" class="form-control" th:value="${worker.preferences.shiftPreference}" readonly>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Working Days</label>
+    <input type="text" class="form-control" th:value="${workingDays}" readonly>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Possible Days</label>
+    <input type="text" class="form-control" th:value="${possibleDays}" readonly>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Working Locations</label>
+    <input type="text" class="form-control" th:value="${workingLocations}" readonly>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Possible Locations</label>
+    <input type="text" class="form-control" th:value="${possibleLocations}" readonly>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Status</label>
+    <input type="text" class="form-control" th:value="${worker.preferences.vacation ? 'Inactive' : 'Active'}" readonly>
+  </div>
+  <div style="margin-bottom: 50px;"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Preferences</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+        .status-active { color: green; font-weight: bold; }
+        .status-inactive { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">Manager Panel</a>
+  <div class="collapse navbar-collapse">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/api/tasks">Tasks</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/api/tasks/archive">Archive</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/api/preferences">Preferences</a>
+      </li>
+    </ul>
+    <a class="btn btn-outline-danger" href="/logout">Logout</a>
+  </div>
+</nav>
+<div class="container mt-5">
+  <h1>Preferences List</h1>
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>Email</th>
+      <th>Phone Number</th>
+      <th>Shift</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="worker : ${workers}">
+      <td th:text="${worker.firstName}">First Name</td>
+      <td th:text="${worker.lastName}">Last Name</td>
+      <td th:text="${worker.email}">Email</td>
+      <td th:text="${worker.phoneNumber}">Phone Number</td>
+      <td th:text="${worker.preferences.shiftPreference}">Shift</td>
+      <td th:classappend="${worker.preferences.vacation ? 'status-inactive' : 'status-active'}">
+        <span th:text="${worker.preferences.vacation ? 'Inactive' : 'Active'}"></span>
+      </td>
+      <td>
+        <a class="btn btn-info" th:href="@{/api/preferences/show/{id}(id=${worker.id})}">Show</a>
+        <a class="btn btn-primary" th:href="@{/api/preferences/edit/{id}(id=${worker.id})}">Edit</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <div style="margin-bottom: 50px;"></div>
+</div>
+</body>
+</html>

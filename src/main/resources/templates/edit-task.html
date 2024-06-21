@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Edit Task</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">Manager Panel</a>
+  <div class="collapse navbar-collapse">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/api/tasks">Tasks</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/api/tasks/archive">Archive</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/api/preferences">Preferences</a>
+      </li>
+    </ul>
+    <a class="btn btn-outline-danger" href="/logout">Logout</a>
+  </div>
+</nav>
+<div class="container">
+  <h1 class="my-4">Edit Task</h1>
+  <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+    <span th:text="${errorMessage}"></span>
+  </div>
+  <form th:action="@{/api/tasks/edit-task/{id}(id=${task.id})}" method="post">
+    <input type="hidden" name="_method" value="put"/>
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <input type="text" id="description" class="form-control" th:value="${task.description}" name="description" required>
+    </div>
+    <div class="mb-3">
+      <label for="startTime" class="form-label">Start Time</label>
+      <input type="datetime-local" id="startTime" class="form-control" th:value="${#temporals.format(task.startTime, 'yyyy-MM-dd HH:mm')}" name="startTime" required>
+    </div>
+    <div class="mb-3">
+      <label for="finishTime" class="form-label">Finish Time</label>
+      <input type="datetime-local" id="finishTime" class="form-control" th:value="${#temporals.format(task.finishTime, 'yyyy-MM-dd HH:mm')}" name="finishTime" required>
+    </div>
+    <div class="mb-3">
+      <label for="neededWorkers" class="form-label">Workers</label>
+      <input type="number" id="neededWorkers" class="form-control" th:value="${task.neededWorkers}" name="neededWorkers" min="1" step="1" required>
+    </div>
+    <div class="mb-3">
+      <label for="location" class="form-label">Location</label>
+      <select id="location" class="form-control" name="locationId">
+        <option th:each="loc : ${allLocations}" th:value="${loc.id}" th:text="${loc.name}" th:selected="${loc.id == task.location.id}">Location</option>
+      </select>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary">Save</button>
+      <a th:href="@{/api/tasks}" class="btn btn-secondary">Back to Tasks</a>
+    </div>
+  </form>
+  <div style="margin-bottom: 50px;"></div>
+</div>
+</body>
+</html>

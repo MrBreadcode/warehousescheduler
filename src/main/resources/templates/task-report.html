@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Task List</title>
+</head>
+<body>
+<div>
+  <h1>Schedule From: <span th:text="${fromDate}"></span> To: <span th:text="${toDate}"></span></h1>
+  <div th:each="task : ${tasks}">
+    <p>
+      <strong>Description:</strong> <span th:text="${task.description}"></span><br>
+      <strong>Start Time:</strong> <span th:text="${#temporals.format(task.startTime, 'yyyy-MM-dd HH:mm')}"></span><br>
+      <strong>Finish Time:</strong> <span th:text="${#temporals.format(task.finishTime, 'yyyy-MM-dd HH:mm')}"></span><br>
+      <strong>Needed Workers:</strong> <span th:text="${task.neededWorkers}"></span><br>
+      <strong>Assigned:</strong> <span th:text="${task.assigned ? 'Yes' : 'No'}"></span><br>
+      <strong>Location:</strong> <span th:text="${task.location.name}"></span>, <span th:text="${task.location.address}"></span><br>
+      <strong>Assigned Workers:</strong>
+    <ul>
+      <li th:each="worker : ${task.assignedWorkers}">
+        <span th:text="${worker.firstName} + ' ' + ${worker.lastName}"></span>
+      </li>
+    </ul>
+    </p>
+    <hr>
+  </div>
+</div>
+</body>
+</html>

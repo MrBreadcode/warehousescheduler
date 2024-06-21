@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Workers</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">Admin Panel</a>
+  <div class="collapse navbar-collapse">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/api/workers">Workers</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/api/managers">Managers</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/api/locations">Locations</a>
+      </li>
+    </ul>
+    <a class="btn btn-outline-danger" href="/logout">Logout</a>
+  </div>
+</nav>
+<div class="container mt-5">
+  <h1>Workers</h1>
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>Username</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="worker : ${workers}">
+      <td th:text="${worker.firstName}">First Name</td>
+      <td th:text="${worker.lastName}">Last Name</td>
+      <td th:text="${worker.email}">Email</td>
+      <td th:text="${worker.phoneNumber}">Phone</td>
+      <td th:text="${worker.username}">Username</td>
+      <td>
+        <a class="btn btn-primary" th:href="@{/api/workers/edit-worker/{id}(id=${worker.id})}">Edit</a>
+        <a class="btn btn-danger" href="#" th:onclick="'confirmDelete(' + ${worker.id} + ')'">Delete</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <a class="btn btn-success" href="/api/workers/add-worker">Add New Worker</a>
+  <div style="margin-bottom: 50px;"></div>
+</div>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script>
+  function confirmDelete(id) {
+    if (confirm('Are you sure you want to delete this worker?')) {
+      window.location.href = '/api/workers/delete-worker/' + id;
+    }
+  }
+</script>
+</body>
+</html>

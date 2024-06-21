@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Add Worker</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">Admin Panel</a>
+  <div class="collapse navbar-collapse">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/api/workers">Workers</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/api/managers">Managers</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/api/locations">Locations</a>
+      </li>
+    </ul>
+    <a class="btn btn-outline-danger" href="/logout">Logout</a>
+  </div>
+</nav>
+<div class="container mt-5">
+  <h1>Add Worker</h1>
+  <form th:action="@{/api/workers/add-worker}" th:object="${worker}" method="post">
+    <div class="form-group">
+      <label for="firstName">First Name:</label>
+      <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required>
+    </div>
+    <div class="form-group">
+      <label for="lastName">Last Name:</label>
+      <input type="text" class="form-control" id="lastName" th:field="*{lastName}" required>
+    </div>
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" class="form-control" id="email" th:field="*{email}">
+    </div>
+    <div class="form-group">
+      <label for="phoneNumber">Phone:</label>
+      <input type="text" class="form-control" id="phoneNumber" th:field="*{phoneNumber}" required>
+    </div>
+    <div class="form-group">
+      <label for="username">Username:</label>
+      <input type="text" class="form-control" id="username" th:field="*{username}" required>
+    </div>
+    <div class="form-group">
+      <label for="password">Password:</label>
+      <input type="password" class="form-control" id="password" th:field="*{password}" required>
+    </div>
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary">Save</button>
+      <a class="btn btn-secondary" href="/api/workers">Back to Workers</a>
+    </div>
+  </form>
+  <div style="margin-bottom: 50px;"></div>
+</div>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>

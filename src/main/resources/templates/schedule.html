@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Schedule</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+        .status-manually { color: purple; font-weight: bold; }
+        .status-assigned { color: green; font-weight: bold; }
+        .status-unassigned { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">Worker Panel</a>
+  <div class="collapse navbar-collapse">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/api/schedule">Schedule</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/api/personal">Personal Data</a>
+      </li>
+    </ul>
+    <span class="navbar-text mr-3" th:text="${workerName}"></span>
+    <a class="btn btn-outline-danger" href="/logout">Logout</a>
+  </div>
+</nav>
+<div class="container mt-5">
+  <h1>Schedule</h1>
+  <div style="margin-bottom: 10px;"></div>
+  <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+    <span th:text="${errorMessage}"></span>
+  </div>
+  <div style="margin-bottom: 15px;"></div>
+  <form th:action="@{/api/schedule/search}" method="post" class="form-inline mb-3">
+    <div class="form-group mx-sm-3 mb-2">
+      <label for="fromDate" class="sr-only">From</label>
+      <input type="date" class="form-control" id="fromDate" name="fromDate" placeholder="From" th:value="${fromDate}" required>
+    </div>
+    <div class="form-group mx-sm-3 mb-2">
+      <label for="toDate" class="sr-only">To</label>
+      <input type="date" class="form-control" id="toDate" name="toDate" placeholder="To" th:value="${toDate}">
+    </div>
+    <button type="submit" class="btn btn-primary mb-2">Search</button>
+    <a href="/api/schedule" class="btn btn-secondary mb-2 ml-2">Show All</a>
+  </form>
+  <div th:each="task : ${tasks}">
+    <p style="margin-top: 20px;"><strong>Description:</strong> <span th:text="${task.description}"></span></p>
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Start Time</th>
+        <th>Finish Time</th>
+        <th>Workers</th>
+        <th>Location</th>
+        <th>Address</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td th:text="${#temporals.format(task.startTime, 'yyyy-MM-dd HH:mm')}">Start Time</td>
+        <td th:text="${#temporals.format(task.finishTime, 'yyyy-MM-dd HH:mm')}">Finish Time</td>
+        <td th:text="${task.neededWorkers}">Workers</td>
+        <td th:text="${task.location.name}">Location</td>
+        <td th:text="${task.location.address}">Address</td>
+        <td>
+          <a class="btn btn-danger" href="#" th:onclick="'confirmDecline(' + ${task.id} + ')'">Decline</a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="margin-bottom: 50px;"></div>
+</div>
+<script>
+  function confirmDecline(taskId) {
+    if (confirm('Are you sure you want to decline this task?')) {
+      var form = document.createElement('form');
+      form.method = 'post';
+      form.action = '/api/schedule/decline/' + taskId;
+      document.body.appendChild(form);
+      form.submit();
+    }
+  }
+</script>
+</body>
+</html>
