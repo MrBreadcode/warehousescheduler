@@ -31,9 +31,7 @@ public class PreferencesController {
 
     @GetMapping
     public String getAllWorkers(Model model) {
-        List<Worker> workers = workerService.findAll();
-        workers.sort(Comparator.comparing(Worker::getFirstName)
-                .thenComparing(Worker::getLastName));
+        List<Worker> workers = workerService.findAllSorted();
         model.addAttribute("workers", workers);
         return "preferences-list";
     }
@@ -43,21 +41,10 @@ public class PreferencesController {
         Worker worker = workerService.findById(id);
         Preferences preferences = worker.getPreferences();
 
-        String workingDays = preferences.getWorkingDays().stream()
-                .map(DayOfWeek::name)
-                .collect(Collectors.joining(", "));
-
-        String possibleDays = preferences.getPossibleDays().stream()
-                .map(DayOfWeek::name)
-                .collect(Collectors.joining(", "));
-
-        String workingLocations = preferences.getWorkingLocations().stream()
-                .map(Location::getName)
-                .collect(Collectors.joining(", "));
-
-        String possibleLocations = preferences.getPossibleLocations().stream()
-                .map(Location::getName)
-                .collect(Collectors.joining(", "));
+        String workingDays = daysToString(preferences.getWorkingDays());
+        String possibleDays = daysToString(preferences.getPossibleDays());
+        String workingLocations = locationsToString(preferences.getWorkingLocations());
+        String possibleLocations = locationsToString(preferences.getPossibleLocations());
 
         model.addAttribute("worker", worker);
         model.addAttribute("workingDays", workingDays);
@@ -103,5 +90,13 @@ public class PreferencesController {
         preferences.setVacation(vacation);
         workerService.savePreferences(worker);
         return "redirect:/api/preferences";
+    }
+
+    private String daysToString(List<DayOfWeek> days) {
+        return days.stream().map(DayOfWeek::name).collect(Collectors.joining(", "));
+    }
+
+    private String locationsToString(List<Location> locations) {
+        return locations.stream().map(Location::getName).collect(Collectors.joining(", "));
     }
 }

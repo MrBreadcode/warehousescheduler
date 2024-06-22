@@ -13,7 +13,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/api/locations")
@@ -31,6 +30,7 @@ public class LocationController {
     public String getAllLocations(Model model) {
         List<Location> locations = locationService.findAll();
         model.addAttribute("locations", locations);
+
         return "location-list";
     }
 
@@ -39,35 +39,28 @@ public class LocationController {
         List<Location> allLocations = locationService.findAll();
         model.addAttribute("location", new Location());
         model.addAttribute("allLocations", allLocations);
+
         return "add-location";
     }
 
     @PostMapping("/add-location")
-    public String createLocation(@RequestParam Map<String, String> distances, @ModelAttribute Location location) {
-        Map<Location, Duration> distanceMap = processDistances(distances, location.getId());
+    public String createLocation(@RequestParam Map<String, String> distances,
+                                 @ModelAttribute Location location) {
+        List<Location> allLocations = locationService.findAll();
+        Map<Location, Duration> distanceMap = distancesFromString(distances, location.getId(), allLocations);
         location.setDistanceToOtherLocations(distanceMap);
         locationService.save(location);
+
         return "redirect:/api/locations";
     }
 
     @GetMapping("/show-location/{id}")
     public String showLocationDetails(@PathVariable("id") Long id, Model model) {
         Location location = locationService.findById(id);
-        List<Location> allLocations = locationService.findAll().stream()
-                .filter(loc -> !loc.getId().equals(id))
-                .collect(Collectors.toList());
-
-        // Конвертуємо Duration в формат HH:mm для відображення у формі
-        Map<Long, String> distanceMap = new HashMap<>();
-        for (Location loc : allLocations) {
-            Duration duration = location.getDistanceToOtherLocations().get(loc);
-            if (duration != null) {
-                distanceMap.put(loc.getId(), durationToString(duration));
-            }
-        }
-
+        List<Location> otherLocations = locationService.findAllOther(id);
+        Map<Long, String> distanceMap = distancesToString(location, otherLocations);
         model.addAttribute("location", location);
-        model.addAttribute("allLocations", allLocations);
+        model.addAttribute("allLocations", otherLocations);
         model.addAttribute("distanceMap", distanceMap);
 
         return "show-location";
@@ -76,31 +69,23 @@ public class LocationController {
     @GetMapping("/edit-location/{id}")
     public String showEditLocationForm(@PathVariable("id") Long id, Model model) {
         Location location = locationService.findById(id);
-        List<Location> allLocations = locationService.findAll().stream()
-                .filter(loc -> !loc.getId().equals(id))
-                .collect(Collectors.toList());
-
-        // Конвертуємо Duration в формат HH:mm для відображення у формі
-        Map<Long, String> distanceMap = new HashMap<>();
-        for (Location loc : allLocations) {
-            Duration duration = location.getDistanceToOtherLocations().get(loc);
-            if (duration != null) {
-                distanceMap.put(loc.getId(), durationToString(duration));
-            }
-        }
-
+        List<Location> otherLocations = locationService.findAllOther(id);
+        Map<Long, String> distanceMap = distancesToString(location, otherLocations);
         model.addAttribute("location", location);
-        model.addAttribute("allLocations", allLocations);
+        model.addAttribute("allLocations", otherLocations);
         model.addAttribute("distanceMap", distanceMap);
 
         return "edit-location";
     }
 
     @PostMapping("/edit-location/{id}")
-    public String updateLocation(@PathVariable Long id, @RequestParam Map<String, String> distances, @ModelAttribute Location location) {
-        Map<Location, Duration> distanceMap = processDistances(distances, id);
+    public String updateLocation(@PathVariable Long id, @RequestParam Map<String, String> distances,
+                                 @ModelAttribute Location location) {
+        List<Location> allLocations = locationService.findAll();
+        Map<Location, Duration> distanceMap = distancesFromString(distances, id, allLocations);
         location.setDistanceToOtherLocations(distanceMap);
         locationService.save(location);
+
         return "redirect:/api/locations";
     }
 
@@ -113,22 +98,30 @@ public class LocationController {
     @GetMapping("/delete-location/{id}")
     public String deleteLocation(@PathVariable Long id) {
         locationService.deleteById(id);
+        
         return "redirect:/api/locations";
     }
 
-    private Map<Location, Duration> processDistances(Map<String, String> distances, Long locationId) {
+    private Map<Location, Duration> distancesFromString(Map<String, String> distances, Long locationId,
+                                                        List<Location> allLocations) {
         Map<Location, Duration> distanceMap = new HashMap<>();
-        List<Location> allLocations = locationService.findAll();
         for (Location loc : allLocations) {
             if (!loc.getId().equals(locationId)) {
                 String distanceStr = distances.get("distances[" + loc.getId() + "]");
                 if (distanceStr != null && !distanceStr.isEmpty()) {
-                    try {
-                        distanceMap.put(loc, stringToDuration(distanceStr));
-                    } catch (Exception e) {
-                        // handle invalid format
-                    }
+                    distanceMap.put(loc, stringToDuration(distanceStr));
                 }
+            }
+        }
+        return distanceMap;
+    }
+
+    private Map<Long, String> distancesToString(Location location, List<Location> otherLocations) {
+        Map<Long, String> distanceMap = new HashMap<>();
+        for (Location loc : otherLocations) {
+            Duration duration = location.getDistanceToOtherLocations().get(loc);
+            if (duration != null) {
+                distanceMap.put(loc.getId(), durationToString(duration));
             }
         }
         return distanceMap;

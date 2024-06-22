@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -23,9 +22,7 @@ public class WorkerController {
 
     @GetMapping
     public String getAllWorkers(Model model) {
-        List<Worker> workers = workerService.findAll();
-        workers.sort(Comparator.comparing(Worker::getFirstName)
-                .thenComparing(Worker::getLastName));
+        List<Worker> workers = workerService.findAllSorted();
         model.addAttribute("workers", workers);
         return "worker-list";
     }

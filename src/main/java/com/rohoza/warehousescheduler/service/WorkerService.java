@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,12 @@ public class WorkerService {
 
     public List<Worker> findAll() {
         return workerRepository.findAll();
+    }
+
+    public List<Worker> findAllSorted() {
+        return workerRepository.findAll().stream()
+                .sorted(Comparator.comparing(Worker::getFirstName)
+                .thenComparing(Worker::getLastName)).toList();
     }
 
     public Worker findById(Long id) {

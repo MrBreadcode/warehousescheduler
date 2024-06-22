@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
 import java.time.DayOfWeek;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
@@ -30,28 +31,26 @@ public class PersonalController {
         Worker worker = workerService.findByUsername(principal.getName());
         Preferences preferences = worker.getPreferences();
 
-        String workingDays = preferences.getWorkingDays().stream()
-                .map(DayOfWeek::name)
-                .collect(Collectors.joining(", "));
+        String workingDays = daysToString(preferences.getWorkingDays());
+        String possibleDays = daysToString(preferences.getPossibleDays());
+        String workingLocations = locationsToString(preferences.getWorkingLocations());
+        String possibleLocations = locationsToString(preferences.getPossibleLocations());
 
-        String possibleDays = preferences.getPossibleDays().stream()
-                .map(DayOfWeek::name)
-                .collect(Collectors.joining(", "));
-
-        String workingLocations = preferences.getWorkingLocations().stream()
-                .map(Location::getName)
-                .collect(Collectors.joining(", "));
-
-        String possibleLocations = preferences.getPossibleLocations().stream()
-                .map(Location::getName)
-                .collect(Collectors.joining(", "));
-
-        model.addAttribute("workerName", worker.getFirstName() + " " + worker.getLastName());
         model.addAttribute("worker", worker);
+        model.addAttribute("workerName", worker.getFirstName() + " " + worker.getLastName());
         model.addAttribute("workingDays", workingDays);
         model.addAttribute("possibleDays", possibleDays);
         model.addAttribute("workingLocations", workingLocations);
         model.addAttribute("possibleLocations", possibleLocations);
+
         return "personal-data";
+    }
+
+    private String daysToString(List<DayOfWeek> days) {
+        return days.stream().map(DayOfWeek::name).collect(Collectors.joining(", "));
+    }
+
+    private String locationsToString(List<Location> locations) {
+        return locations.stream().map(Location::getName).collect(Collectors.joining(", "));
     }
 }
